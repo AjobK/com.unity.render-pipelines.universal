@@ -23,7 +23,11 @@ public class TilemapShadows : MonoBehaviour {
     public void Start() {
         Instance = this;
         tilemapCollider = GetComponent<CompositeCollider2D>();
+
         shadowCasterContainer = new GameObject("Shadow Casters");
+        Vector3 lP = shadowCasterContainer.transform.localPosition;
+        shadowCasterContainer.transform.parent = gameObject.transform;
+        shadowCasterContainer.transform.localPosition = lP;
         for (int i = 0; i < tilemapCollider.pathCount; i++) {
             Vector2[] pathVertices = new Vector2[tilemapCollider.GetPathPointCount(i)];
             tilemapCollider.GetPath(i, pathVertices);
@@ -31,7 +35,7 @@ public class TilemapShadows : MonoBehaviour {
             shadowCasters.Add(shadowCaster);
             PolygonCollider2D shadowPolygon = (PolygonCollider2D)shadowCaster.AddComponent(typeof(PolygonCollider2D));
             shadowPolygons.Add(shadowPolygon);
-            Vector3 lP = shadowCaster.transform.localPosition;
+            lP = shadowCaster.transform.localPosition;
             shadowCaster.transform.parent = shadowCasterContainer.transform;
             shadowCaster.transform.localPosition = lP;
             shadowPolygon.points = pathVertices;
