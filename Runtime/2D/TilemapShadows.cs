@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 
+// Big thank you to @thomasedw and @MD_Reptile on the Unity forums for making this
+// https://forum.unity.com/threads/the-new-2d-lighting-on-tilemaps-advice-and-suggestions.810927/
+// https://forum.unity.com/threads/shadow-caster-2d-not-working-on-tilemap.793803/
+
 public class TilemapShadows : MonoBehaviour {
     public static TilemapShadows Instance;
+
+    [SerializeField] private bool selfShadows = default;
 
     private CompositeCollider2D tilemapCollider;
     private GameObject shadowCasterContainer;
@@ -17,7 +23,7 @@ public class TilemapShadows : MonoBehaviour {
     public void Start() {
         Instance = this;
         tilemapCollider = GetComponent<CompositeCollider2D>();
-        shadowCasterContainer = GameObject.Find("shadow_casters");
+        shadowCasterContainer = new GameObject("Shadow Casters");
         for (int i = 0; i < tilemapCollider.pathCount; i++) {
             Vector2[] pathVertices = new Vector2[tilemapCollider.GetPathPointCount(i)];
             tilemapCollider.GetPath(i, pathVertices);
@@ -25,14 +31,16 @@ public class TilemapShadows : MonoBehaviour {
             shadowCasters.Add(shadowCaster);
             PolygonCollider2D shadowPolygon = (PolygonCollider2D)shadowCaster.AddComponent(typeof(PolygonCollider2D));
             shadowPolygons.Add(shadowPolygon);
+            Vector3 lP = shadowCaster.transform.localPosition;
             shadowCaster.transform.parent = shadowCasterContainer.transform;
+            shadowCaster.transform.localPosition = lP;
             shadowPolygon.points = pathVertices;
             shadowPolygon.enabled = false;
             //if (shadowCaster.GetComponent<ShadowCaster2D>() != null) // remove existing caster?
             //    Destroy(shadowCaster.GetComponent<ShadowCaster2D>());
             ShadowCaster2D shadowCasterComponent = shadowCaster.AddComponent<ShadowCaster2D>();
             shadowCasterComponents.Add(shadowCasterComponent);
-            shadowCasterComponent.selfShadows = true;
+            shadowCasterComponent.selfShadows = selfShadows;
         }
     }
 
@@ -49,14 +57,16 @@ public class TilemapShadows : MonoBehaviour {
             shadowCasters.Add(shadowCaster);
             PolygonCollider2D shadowPolygon = (PolygonCollider2D)shadowCaster.AddComponent(typeof(PolygonCollider2D));
             shadowPolygons.Add(shadowPolygon);
+            Vector3 lP = shadowCaster.transform.localPosition;
             shadowCaster.transform.parent = shadowCasterContainer.transform;
+            shadowCaster.transform.localPosition = lP;
             shadowPolygon.points = pathVertices;
             shadowPolygon.enabled = false;
             //if (shadowCaster.GetComponent<ShadowCaster2D>() != null) // remove existing caster?
             //    Destroy(shadowCaster.GetComponent<ShadowCaster2D>());
             ShadowCaster2D shadowCasterComponent = shadowCaster.AddComponent<ShadowCaster2D>();
             shadowCasterComponents.Add(shadowCasterComponent);
-            shadowCasterComponent.selfShadows = true;
+            shadowCasterComponent.selfShadows = selfShadows;
         }
         doCleanup = true;
     }

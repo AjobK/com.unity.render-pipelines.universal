@@ -74,11 +74,13 @@ namespace UnityEngine.Experimental.Rendering.Universal {
             return m_ApplyToSortingLayers != null ? Array.IndexOf(m_ApplyToSortingLayers, layer) >= 0 : false;
         }
 
+        // Big thank you to @thomasedw and @MD_Reptile on the Unity forums for adding Ttilemap support
+        // https://forum.unity.com/threads/the-new-2d-lighting-on-tilemaps-advice-and-suggestions.810927/
+        // https://forum.unity.com/threads/shadow-caster-2d-not-working-on-tilemap.793803/
+
         private Vector3 vec2To3(Vector2 inputVector) {
             return new Vector3(inputVector.x, inputVector.y, 0);
         }
-
-
         private void Awake() {
             if (m_ApplyToSortingLayers == null)
                 m_ApplyToSortingLayers = SetDefaultSortingLayers();
@@ -111,7 +113,7 @@ namespace UnityEngine.Experimental.Rendering.Universal {
                 };
             }
         }
-
+        // End changes for Tilemap support
 
         protected void OnEnable() {
             if (m_Mesh == null || m_InstanceId != GetInstanceID()) {
